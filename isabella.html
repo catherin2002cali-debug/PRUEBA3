@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quinceañera · Isabella Thelma Mejía Zambrano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --verde: #6B7B5A;
+    --verde-oscuro: #4A5940;
+    --crema: #F7F4EF;
+    --crema-oscuro: #EDE8DF;
+    --dorado: #C8BF9A;
+    --dorado-claro: #D4C9A8;
+    --texto: #3D3A30;
+    --texto-suave: #8C7E5E;
+    --borde: #DDD8CC;
+  }
+
+  body {
+    background: #EFEBE3;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .card {
+    background: var(--crema);
+    max-width: 420px;
+    width: 100%;
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(80,70,50,0.13);
+    animation: fadeUp 0.9s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(24px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes floatLirio {
+    0%,100% { transform:translateY(0); }
+    50%      { transform:translateY(-7px); }
+  }
+
+  /* ══ HERO ══════════════════════════════════════════ */
+  .hero {
+    background: var(--verde);
+    padding: 2.8rem 1.5rem 2.4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content:'';
+    position:absolute; inset:0;
+    background: repeating-linear-gradient(
+      45deg,transparent,transparent 18px,
+      rgba(255,255,255,0.022) 18px,rgba(255,255,255,0.022) 19px
+    );
+  }
+
+  .lirio-hero-wrap {
+    margin: 0 auto 1.4rem;
+    width: 100px; height: 140px;
+    position: relative; z-index: 1;
+    animation: floatLirio 4.5s ease-in-out infinite;
+  }
+
+  /* Texto de honor (padres) */
+  .honor-padres {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12.5px;
+    font-weight: 400;
+    color: #E8DFC6;
+    line-height: 1.75;
+    margin-bottom: 18px;
+    position: relative; z-index: 1;
+    animation: fadeUp 1s 0.25s ease both;
+  }
+  .honor-padres strong {
+    font-weight: 500;
+    color: var(--dorado-claro);
+    display: block;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
+  }
+  .honor-padres em {
+    font-style: italic;
+    font-size: 12px;
+    color: var(--dorado);
+    letter-spacing: 0.04em;
+  }
+
+  .nombre-lettering {
+    font-family: 'Cormorant', serif;
+    font-weight: 300;
+    font-size: 46px;
+    color: #F2ECE0;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    position: relative; z-index:1;
+    animation: fadeUp 1s 0.4s ease both;
+  }
+  .nombre-sub {
+    font-family: 'Cormorant', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--dorado);
+    margin-top: 10px;
+    position: relative; z-index:1;
+    animation: fadeUp 1s 0.5s ease both;
+  }
+  .ornamento {
+    color: var(--dorado-claro);
+    font-size: 18px; letter-spacing: 12px;
+    margin-top: 16px;
+    position: relative; z-index:1;
+    animation: fadeUp 1s 0.6s ease both;
+  }
+
+  /* ══ RESEÑA ════════════════════════════════════════ */
+  .resena {
+    padding: 2rem 2rem 1.6rem;
+    text-align: center;
+    border-bottom: 0.5px solid var(--borde);
+    background: linear-gradient(180deg,#FDFAF5 0%,var(--crema) 100%);
+  }
+  .lirio-deco    { width:50px;  height:70px; margin:0 auto 1rem;   display:block; opacity:0.7; }
+  .lirio-deco-sm { width:30px;  height:42px; margin:0.9rem auto 0; display:block; opacity:0.35; }
+  .resena-texto {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15.5px; color:var(--texto);
+    line-height:1.85; font-style:italic; margin-bottom:1rem;
+  }
+  .resena-texto strong { font-style:normal; color:var(--verde-oscuro); font-weight:500; }
+  .resena-firma { font-size:10.5px; letter-spacing:0.22em; color:var(--texto-suave); text-transform:uppercase; }
+
+  /* ══ SECCIONES ════════════════════════════════════ */
+  .seccion {
+    padding: 1.5rem 1.75rem;
+    border-bottom: 0.5px solid var(--borde);
+  }
+  .seccion:last-child { border-bottom:none; }
+  .sec-titulo {
+    font-size:10px; letter-spacing:0.22em;
+    color:var(--texto-suave); text-transform:uppercase;
+    text-align:center; margin-bottom:1.1rem;
+  }
+  .sec-lirio { width:24px; height:34px; display:block; margin:0 auto 0.6rem; opacity:0.4; }
+
+  /* ══ COUNTDOWN ════════════════════════════════════ */
+  .countdown { display:flex; justify-content:center; align-items:flex-start; }
+  .cunit { text-align:center; min-width:62px; }
+  .cnum {
+    font-family:'Playfair Display',serif;
+    font-size:38px; color:var(--texto); line-height:1;
+    transition:transform 0.2s;
+  }
+  .cnum.pulso { transform:scale(1.12); }
+  .clabel { font-size:9px; letter-spacing:0.14em; color:var(--texto-suave); text-transform:uppercase; margin-top:5px; }
+  .csep { font-family:'Playfair Display',serif; font-size:28px; color:var(--dorado-claro); padding:0 2px; margin-top:3px; }
+  .cd-nota { text-align:center; font-size:13px; color:var(--texto-suave); font-style:italic; margin-top:12px; }
+
+  /* ══ EVENTO ══════════════════════════════════════ */
+  .evento-nombre { font-family:'Playfair Display',serif; font-size:18px; color:var(--texto); margin-bottom:6px; }
+  .evento-dir    { font-size:14px; color:var(--texto); line-height:1.75; }
+  .evento-hora   { font-size:13px; color:var(--texto-suave); font-style:italic; margin-top:8px; }
+  .mapa-btn {
+    display:inline-block; margin-top:12px; padding:8px 20px;
+    border:0.5px solid var(--verde); border-radius:2px;
+    font-family:'Cormorant Garamond',serif; font-size:13px;
+    color:var(--verde); text-decoration:none; letter-spacing:0.08em; transition:all 0.2s;
+  }
+  .mapa-btn:hover { background:var(--verde); color:#F5EFE0; }
+
+  /* ══ DRESS CODE ══════════════════════════════════ */
+  .dress-texto { text-align:center; font-size:15px; color:var(--texto); margin-bottom:4px; line-height: 1.7; }
+  .dress-nota  { text-align:center; font-size:12.5px; color:var(--texto-suave); font-style:italic; margin-top: 6px; }
+  .dress-paleta { display:flex; gap:10px; justify-content:center; margin-top:12px; }
+  .color-circulo { width:30px; height:30px; border-radius:50%; border:1px solid rgba(0,0,0,0.08); }
+
+  /* ══ FORMULARIO ══════════════════════════════════ */
+  .input-nombre {
+    width:100%; padding:11px 14px; border:0.5px solid var(--dorado);
+    background:#FDFAF5; color:var(--texto);
+    font-family:'Cormorant Garamond',serif; font-size:16px;
+    border-radius:2px; margin-bottom:10px; outline:none; transition:border-color 0.2s;
+  }
+  .input-nombre:focus { border-color:var(--verde); }
+  .input-nombre::placeholder { color:#B0A88A; }
+  .btn {
+    width:100%; padding:13px; font-family:'Cormorant Garamond',serif;
+    font-size:16px; border-radius:2px; cursor:pointer; margin-bottom:8px;
+    transition:all 0.2s; letter-spacing:0.04em;
+  }
+  .btn-si { background:var(--verde); color:#F5EFE0; border:0.5px solid var(--verde); }
+  .btn-si:hover { background:var(--verde-oscuro); }
+  .btn-no { background:transparent; color:var(--verde); border:0.5px solid var(--verde); }
+  .btn-no:hover { background:var(--crema-oscuro); }
+  .resp-ok {
+    display:none; text-align:center; font-style:italic; color:var(--verde);
+    font-size:16px; line-height:1.7; padding:.5rem 0;
+  }
+
+  /* ══ LISTA ══════════════════════════════════════ */
+  .lista-item {
+    display:flex; align-items:center; gap:10px;
+    padding:7px 0; border-bottom:0.5px solid #EDE8DF;
+    font-size:15px; color:var(--texto);
+  }
+  .lista-item:last-child { border-bottom:none; }
+  .lista-dot  { width:7px; height:7px; border-radius:50%; background:var(--verde); flex-shrink:0; }
+  .lista-fecha { font-size:11px; color:#B0A88A; margin-left:auto; }
+  .lista-vacia { font-size:13px; color:var(--texto-suave); font-style:italic; text-align:center; padding:8px 0; }
+  .fb-status   { font-size:12px; color:var(--texto-suave); font-style:italic; text-align:center; padding:5px 0; }
+
+  /* ══ SOBRE ══════════════════════════════════════ */
+  .sobre-wrap { display:flex; flex-direction:column; align-items:center; cursor:pointer; padding:10px 0; }
+  .sobre { position:relative; width:160px; height:110px; margin:0 auto; }
+  .sobre-cuerpo {
+    position:absolute; bottom:0; left:0; right:0; height:100px;
+    background:#E8D9B8; border:1px solid #C8B88A; border-radius:2px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .sobre-sello {
+    width:32px; height:32px; border-radius:50%; background:var(--verde); color:#F5EFE0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; border:1.5px solid var(--dorado-claro);
+  }
+  .sobre-solapa {
+    position:absolute; top:0; left:0; right:0; z-index:2;
+    width:0; height:0;
+    border-left:80px solid transparent; border-right:80px solid transparent; border-top:55px solid #D4C4A0;
+    transform-origin:top center; transition:transform 0.5s ease;
+  }
+  .sobre-solapa.abierto { transform:rotateX(180deg); }
+  .sobre-mensaje {
+    position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+    width:180px; background:#FDFAF5; border:0.5px solid var(--dorado); border-radius:2px;
+    padding:12px 14px; text-align:center; font-size:13.5px; color:var(--texto); line-height:1.7;
+    opacity:0; transition:opacity 0.4s 0.4s, bottom 0.4s 0.4s;
+    pointer-events:none; z-index:3;
+  }
+  .sobre-mensaje.visible { opacity:1; bottom:96px; }
+  .sobre-hint { font-size:12px; color:var(--texto-suave); font-style:italic; margin-top:10px; transition:opacity 0.3s; }
+  .sobre-hint.oculto { opacity:0; }
+
+  /* ══ FOOTER ══════════════════════════════════════ */
+  .footer-lirio { padding:1.6rem 1.75rem 2rem; text-align:center; }
+  .footer-lirio svg { width:42px; height:60px; margin-bottom:10px; opacity:0.38; }
+  .footer-texto { font-size:13px; color:var(--texto-suave); font-style:italic; line-height:1.9; }
+</style>
+</head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<symbol id="lirio" viewBox="0 0 220 200">
+  <line x1="110" y1="196" x2="110" y2="148" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M110 172 C88 162 58 148 42 134 C56 137 84 154 110 162 Z"
+    fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+  <line x1="110" y1="162" x2="46" y2="136" stroke="currentColor" stroke-width="0.7" opacity="0.35"/>
+  <path d="M110 172 C132 162 162 148 178 134 C164 137 136 154 110 162 Z"
+    fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+  <line x1="110" y1="162" x2="174" y2="136" stroke="currentColor" stroke-width="0.7" opacity="0.35"/>
+  <path d="M110 114 C94 120 70 126 50 120 C38 114 36 102 46 94 C58 86 82 98 98 112 Z"
+    fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+  <line x1="110" y1="114" x2="48" y2="96" stroke="currentColor" stroke-width="0.8" opacity="0.35"/>
+  <path d="M110 114 C126 120 150 126 170 120 C182 114 184 102 174 94 C162 86 138 98 122 112 Z"
+    fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+  <line x1="110" y1="114" x2="172" y2="96" stroke="currentColor" stroke-width="0.8" opacity="0.35"/>
+  <path d="M110 112 C97 124 90 142 94 158 C96 166 102 170 110 170 C118 170 124 166 126 158 C130 142 123 124 110 112 Z"
+    fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+  <line x1="110" y1="114" x2="110" y2="164" stroke="currentColor" stroke-width="0.8" opacity="0.35"/>
+  <path d="M110 108 C95 94 78 70 80 48 C81 34 92 26 100 30 C108 34 110 60 110 88 Z"
+    fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+  <line x1="110" y1="108" x2="101" y2="31" stroke="currentColor" stroke-width="0.75" opacity="0.3"/>
+  <path d="M110 108 C125 94 142 70 140 48 C139 34 128 26 120 30 C112 34 110 60 110 88 Z"
+    fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+  <line x1="110" y1="108" x2="119" y2="31" stroke="currentColor" stroke-width="0.75" opacity="0.3"/>
+  <path d="M110 106 C103 90 98 62 100 40 C101 24 110 14 110 14 C110 14 119 24 120 40 C122 62 117 90 110 106 Z"
+    fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+  <line x1="110" y1="16" x2="110" y2="102" stroke="currentColor" stroke-width="0.75" opacity="0.3"/>
+  <line x1="110" y1="112" x2="110" y2="82" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  <circle cx="110" cy="79" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  <line x1="110" y1="112" x2="100" y2="85" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity="0.72"/>
+  <circle cx="100" cy="83" r="2.6" fill="currentColor" opacity="0.72"/>
+  <line x1="110" y1="112" x2="120" y2="85" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity="0.72"/>
+  <circle cx="120" cy="83" r="2.6" fill="currentColor" opacity="0.72"/>
+  <line x1="110" y1="112" x2="110" y2="85" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" opacity="0.62"/>
+  <circle cx="110" cy="83" r="2.3" fill="currentColor" opacity="0.65"/>
+</symbol>
+</svg>
+
+<div class="card">
+
+  <!-- HERO -->
+  <div class="hero">
+    <!-- Lirio flotante -->
+    <div class="lirio-hero-wrap">
+      <svg viewBox="0 0 220 200" width="100" height="140" color="#D8CEB0">
+        <use href="#lirio"/>
+      </svg>
+    </div>
+
+    <!-- Padres + invitación -->
+    <div class="honor-padres">
+      <strong>Vannessa Zambrano &amp; Walter Mejía</strong>
+      tienen el honor de invitar a usted a la<br>
+      celebración de los quince años de su hija:
+    </div>
+
+    <!-- Nombre -->
+    <h1 class="nombre-lettering">Isabella Thelma<br>Mejía Zambrano</h1>
+    <div class="ornamento">· · ·</div>
+  </div>
+
+  <!-- RESEÑA -->
+  <div class="resena">
+    <svg class="lirio-deco" viewBox="0 0 220 200" color="#9E7B72"><use href="#lirio"/></svg>
+    <p class="resena-texto">
+      Juntos agradecemos a Dios por la dicha de su vida<br>
+      y nos complacería que compartiera con nosotros<br>
+      esta noche tan especial.
+    </p>
+    <p class="resena-firma">— con todo nuestro amor —</p>
+    <svg class="lirio-deco-sm" viewBox="0 0 220 200" color="#9E7B72"><use href="#lirio"/></svg>
+  </div>
+
+  <!-- COUNTDOWN -->
+  <div class="seccion">
+    <p class="sec-titulo">Faltan</p>
+    <div class="countdown">
+      <div class="cunit"><div class="cnum" id="cd-dias">--</div><div class="clabel">Días</div></div>
+      <div class="csep">·</div>
+      <div class="cunit"><div class="cnum" id="cd-horas">--</div><div class="clabel">Horas</div></div>
+      <div class="csep">·</div>
+      <div class="cunit"><div class="cnum" id="cd-mins">--</div><div class="clabel">Min</div></div>
+      <div class="csep">·</div>
+      <div class="cunit"><div class="cnum" id="cd-segs">--</div><div class="clabel">Seg</div></div>
+    </div>
+    <p class="cd-nota">para el gran día de Isabella</p>
+  </div>
+
+  <!-- EVENTO -->
+  <div class="seccion">
+    <svg class="sec-lirio" viewBox="0 0 220 200" color="#9E7B72"><use href="#lirio"/></svg>
+    <p class="sec-titulo">El gran día</p>
+    <p class="evento-nombre">Casa de Eventos Centenario</p>
+    <p class="evento-dir">
+      (Junto al Pre-Kinder Nueva Semilla)<br>
+      Calle Aurelio Carrera #602<br>
+      entre Dolores Sucre y Dr. José Vicente Trujillo<br>
+      Barrio del Centenario, Guayaquil
+    </p>
+    <p class="evento-hora">Viernes 19 de junio de 2026 · 20:00 h – 02:00 am</p>
+    <a class="mapa-btn" href="https://www.google.com/maps/search/Calle+Aurelio+Carrera+602+Guayaquil" target="_blank">Ver ubicación →</a>
+  </div>
+
+  <!-- DRESS CODE -->
+  <div class="seccion">
+    <p class="sec-titulo">Etiqueta</p>
+    <p class="dress-texto">
+      Vestimenta: <strong style="color:var(--verde-oscuro);">Formal</strong>
+    </p>
+    <p class="dress-nota">El color rosado queda reservado para la quinceañera</p>
+    <div class="dress-paleta">
+      <div class="color-circulo" style="background:#0A3323;" title="Dark green"></div>
+      <div class="color-circulo" style="background:#839958;" title="Moss green"></div>
+      <div class="color-circulo" style="background:#F7F4D5;" title="Beige"></div>
+      <div class="color-circulo" style="background:#D3968C;" title="Rosy brown"></div>
+      <div class="color-circulo" style="background:#105666;" title="Midnight green"></div>
+    </div>
+    <p class="dress-nota" style="margin-top:14px; font-size:12px; letter-spacing:0.04em;">
+      Se ruega confirmar asistencia antes del <strong style="font-style:normal; color:var(--texto);">11 de junio de 2026</strong>
+    </p>
+  </div>
+
+  <!-- REGALOS -->
+  <div class="seccion">
+    <p class="sec-titulo">Regalos y Aportes</p>
+    <div class="sobre-wrap" onclick="abrirSobre()">
+      <div class="sobre" id="sobre">
+        <div class="sobre-solapa" id="solapa"></div>
+        <div class="sobre-cuerpo"><div class="sobre-sello">&#10022;</div></div>
+        <div class="sobre-mensaje" id="sobre-msg">
+          <p>Tu compañía nos llena<br>de felicidad.</p>
+          <p style="margin-top:8px; font-size:12.5px; color:var(--texto-suave);">Recibiremos con cariño<br>tu obsequio en<br>sobre cerrado. 🌸</p>
+        </div>
+      </div>
+      <p class="sobre-hint" id="sobre-hint">Toca el sobre para abrirlo</p>
+    </div>
+  </div>
+
+  <!-- CONFIRMACIÓN -->
+  <div class="seccion">
+    <svg class="sec-lirio" viewBox="0 0 220 200" color="#9E7B72"><use href="#lirio"/></svg>
+    <p class="sec-titulo">Confirmación de asistencia</p>
+    <div id="form-wrap">
+      <input class="input-nombre" id="nombre-input" type="text"
+        placeholder="Tu nombre completo" autocomplete="name"/>
+      <button class="btn btn-si" onclick="confirmar('si')">Sí, asistiré · Cuenta conmigo</button>
+      <button class="btn btn-no" onclick="confirmar('no')">No podré asistir</button>
+    </div>
+    <div class="resp-ok" id="resp-ok"></div>
+
+    <div id="admin-wrap" style="margin-top:10px;">
+      <div id="admin-lock">
+        <input class="input-nombre" id="pwd-input" type="password"
+          placeholder="Contraseña para ver la lista" style="margin-bottom:8px;"/>
+        <button class="btn btn-no" onclick="verificarPwd()">Ver lista de asistentes</button>
+        <p id="pwd-error" style="display:none;text-align:center;font-size:13px;color:#C0695A;font-style:italic;margin-top:6px;">Contraseña incorrecta</p>
+      </div>
+      <div id="admin-panel" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <p style="font-size:11px;letter-spacing:.15em;color:var(--texto-suave);text-transform:uppercase;">
+            Confirmadas · <span id="total-count">0</span>
+          </p>
+          <button onclick="cerrarAdmin()" style="background:none;border:none;color:var(--texto-suave);font-size:13px;cursor:pointer;font-family:'Cormorant Garamond',serif;">Cerrar ✕</button>
+        </div>
+        <p id="fb-status" class="fb-status" style="display:none;"></p>
+        <div id="lista-wrap"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-lirio">
+    <svg viewBox="0 0 220 200" color="#9E7B72"><use href="#lirio"/></svg>
+    <p class="footer-texto">Con amor, te esperamos.<br><em>Isabella · 19 de junio de 2026</em></p>
+  </div>
+
+</div>
+
+<script>
+var firebaseConfig = {
+  apiKey:            "AIzaSyAgJYXbLAY0dpS0vIJZ6YPrhVBDU5NXyrA",
+  authDomain:        "isabella-7da65.firebaseapp.com",
+  databaseURL:       "https://isabella-7da65-default-rtdb.firebaseio.com",
+  projectId:         "isabella-7da65",
+  storageBucket:     "isabella-7da65.firebasestorage.app",
+  messagingSenderId: "942411256098",
+  appId:             "1:942411256098:web:2ace5000917e9ff5e9d57b"
+};
+
+var db = null, fbOk = false;
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+  fbOk = true;
+} catch(e){ fbOk = false; console.warn('Firebase error:', e); }
+
+// ── COUNTDOWN ──
+var TARGET = new Date('2026-06-19T20:00:00');
+var prevSegs = -1;
+function pad(n){ return String(n).padStart(2,'0'); }
+function tick(){
+  var diff = TARGET - new Date();
+  if(diff <= 0){
+    ['cd-dias','cd-horas','cd-mins','cd-segs'].forEach(function(id){
+      document.getElementById(id).textContent='00';
+    }); return;
+  }
+  document.getElementById('cd-dias').textContent  = pad(Math.floor(diff/86400000));
+  document.getElementById('cd-horas').textContent = pad(Math.floor((diff%86400000)/3600000));
+  document.getElementById('cd-mins').textContent  = pad(Math.floor((diff%3600000)/60000));
+  var s = Math.floor((diff%60000)/1000);
+  var el = document.getElementById('cd-segs');
+  el.textContent = pad(s);
+  if(s !== prevSegs){
+    el.classList.add('pulso');
+    setTimeout(function(){ el.classList.remove('pulso'); },200);
+    prevSegs = s;
+  }
+}
+tick(); setInterval(tick,1000);
+
+function guardar(data){
+  if(fbOk && db){
+    db.ref('confirmaciones').push(data)
+      .then(function(){ console.log('Guardado en Firebase OK'); })
+      .catch(function(e){ console.warn('Firebase write error:', e); });
+  } else {
+    try {
+      var arr = JSON.parse(localStorage.getItem('confirmaciones')||'[]');
+      arr.push(data);
+      localStorage.setItem('confirmaciones', JSON.stringify(arr));
+    } catch(e){}
+  }
+}
+
+function confirmar(resp){
+  var nombre = document.getElementById('nombre-input').value.trim();
+  if(!nombre){
+    var inp = document.getElementById('nombre-input');
+    inp.style.borderColor='#C0695A';
+    inp.placeholder='Por favor escribe tu nombre primero';
+    inp.focus(); return;
+  }
+  var fecha = new Date().toLocaleDateString('es-EC',{day:'2-digit',month:'short',year:'numeric'});
+  guardar({ nombre:nombre, respuesta:resp, fecha:fecha, ts:Date.now() });
+  document.getElementById('form-wrap').style.display='none';
+  var ok = document.getElementById('resp-ok');
+  ok.style.display='block';
+  ok.innerHTML = resp==='si'
+    ? '¡Gracias, <strong>'+nombre+'</strong>!<br>Isabella cuenta con tu presencia. 🌸'
+    : 'Gracias por avisarnos, <strong>'+nombre+'</strong>.<br>Te deseamos lo mejor. ✨';
+}
+
+var CLAVE = '1806';
+function verificarPwd(){
+  if(document.getElementById('pwd-input').value === CLAVE){
+    document.getElementById('admin-lock').style.display='none';
+    document.getElementById('admin-panel').style.display='block';
+    renderLista();
+  } else {
+    document.getElementById('pwd-error').style.display='block';
+    document.getElementById('pwd-input').value='';
+  }
+}
+document.addEventListener('keydown',function(e){
+  var inp=document.getElementById('pwd-input');
+  if(inp && document.activeElement===inp && e.key==='Enter') verificarPwd();
+});
+function cerrarAdmin(){
+  document.getElementById('admin-panel').style.display='none';
+  document.getElementById('admin-lock').style.display='block';
+  document.getElementById('pwd-input').value='';
+}
+
+function renderLista(){
+  var wrap=document.getElementById('lista-wrap');
+  var status=document.getElementById('fb-status');
+  var counter=document.getElementById('total-count');
+
+  if(fbOk && db){
+    status.style.display='block'; status.textContent='Cargando lista…';
+    db.ref('confirmaciones').orderByChild('ts').once('value',function(snap){
+      status.style.display='none';
+      var items=[];
+      snap.forEach(function(c){ var v=c.val(); if(v&&v.respuesta==='si') items.push(v); });
+      counter.textContent=items.length;
+      wrap.innerHTML = items.length===0
+        ? '<p class="lista-vacia">Aún no hay confirmaciones.</p>'
+        : items.map(function(c){
+            return '<div class="lista-item"><div class="lista-dot"></div>'
+              +'<span>'+c.nombre+'</span>'
+              +'<span class="lista-fecha">'+c.fecha+'</span></div>';
+          }).join('');
+    });
+  } else {
+    var datos;
+    try { datos=JSON.parse(localStorage.getItem('confirmaciones')||'[]'); } catch(e){datos=[];}
+    datos=datos.filter(function(c){return c.respuesta==='si';});
+    counter.textContent=datos.length;
+    wrap.innerHTML = datos.length===0
+      ? '<p class="lista-vacia">Aún no hay confirmaciones.</p>'
+      : datos.map(function(c){
+          return '<div class="lista-item"><div class="lista-dot"></div>'
+            +'<span>'+c.nombre+'</span>'
+            +'<span class="lista-fecha">'+c.fecha+'</span></div>';
+        }).join('');
+    status.style.display='block';
+    status.textContent='⚠ Sin conexión a Firebase — mostrando solo este dispositivo';
+  }
+}
+
+var sobreAbierto=false;
+function abrirSobre(){
+  if(sobreAbierto) return; sobreAbierto=true;
+  document.getElementById('solapa').classList.add('abierto');
+  document.getElementById('sobre-msg').classList.add('visible');
+  document.getElementById('sobre-hint').classList.add('oculto');
+}
+</script>
+</body>
+</html>
